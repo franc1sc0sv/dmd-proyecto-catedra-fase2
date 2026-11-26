@@ -15,8 +15,7 @@ let
         {"nombre_mes", type text},
         {"trimestre", Int64.Type},
         {"semestre", Int64.Type},
-        {"anio", Int64.Type},
-        {"mes_key", Int64.Type}
+        {"anio", Int64.Type}
             }, "en-US"),
     Resultado = if FuenteDatos = "SQL" then DesdeSQL() else DesdeCSV()
 in

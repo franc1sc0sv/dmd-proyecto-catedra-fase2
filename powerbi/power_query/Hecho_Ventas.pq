@@ -9,6 +9,7 @@ let
         in
             Table.TransformColumnTypes(Encabezados, {
         {"tiempo_key", Int64.Type},
+        {"mes_key", Int64.Type},
         {"cliente_key", Int64.Type},
         {"producto_key", Int64.Type},
         {"canal_key", Int64.Type},

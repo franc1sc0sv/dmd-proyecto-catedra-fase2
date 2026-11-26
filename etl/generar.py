@@ -30,14 +30,16 @@ def ddl() -> str:
 def diccionario() -> str:
     out = ["# Diccionario de datos", "",
            "> Generado por `python -m etl.generar` desde `etl/contrato.py`. No editar a mano.", "",
-           "Convenciones: **PK** llave primaria, **FK** llave foránea, montos en USD. "
+           "Convenciones: **PK** llave primaria, **FK** llave foránea, montos en USD. La columna *Origen* es el "
+           "mapeo origen → destino (Clase 7) y la *Clasificación* sigue los tipos de hechos y dimensiones de la Clase 5. "
            "Diagrama y relaciones: [esquema_estrella.md](esquema_estrella.md).", ""]
     for t in contrato.TABLAS:
-        out += [f"## {t.nombre}", "", f"*Tipo:* {t.tipo} · *Grano:* {t.grano}", "",
-                "| Columna | Tipo | Nulo | Llave | Descripción |", "|---|---|---|---|---|"]
+        out += [f"## {t.nombre}", "", f"*Tipo:* {t.tipo} · *Grano:* {t.grano}"
+                + (f" · *Clasificación:* {t.clasificacion}" if t.clasificacion else ""), "",
+                "| Columna | Tipo | Nulo | Llave | Origen (Excel → destino) | Descripción |", "|---|---|---|---|---|---|"]
         for c in t.columnas:
             llave = " ".join(x for x in ["PK" if c.pk else "", f"FK → {c.fk}" if c.fk else ""] if x)
-            out.append(f"| `{c.nombre}` | {c.tipo_sql} | {'sí' if c.nula else 'no'} | {llave} | {c.descripcion} |")
+            out.append(f"| `{c.nombre}` | {c.tipo_sql} | {'sí' if c.nula else 'no'} | {llave} | {c.origen or 'ETL'} | {c.descripcion} |")
         out.append("")
     return "\n".join(out)
 

@@ -35,9 +35,7 @@ CREATE TABLE dbo.Dim_Tiempo (
     trimestre TINYINT NOT NULL,
     semestre TINYINT NOT NULL,
     anio SMALLINT NOT NULL,
-    mes_key INT NOT NULL,
-    CONSTRAINT PK_Dim_Tiempo PRIMARY KEY (tiempo_key),
-    CONSTRAINT FK_Dim_Tiempo_mes_key FOREIGN KEY (mes_key) REFERENCES dbo.Dim_Mes (mes_key)
+    CONSTRAINT PK_Dim_Tiempo PRIMARY KEY (tiempo_key)
 );
 GO
 
@@ -83,6 +81,7 @@ GO
 
 CREATE TABLE dbo.Hecho_Ventas (
     tiempo_key INT NOT NULL,
+    mes_key INT NOT NULL,
     cliente_key INT NOT NULL,
     producto_key INT NOT NULL,
     canal_key INT NOT NULL,
@@ -95,6 +94,7 @@ CREATE TABLE dbo.Hecho_Ventas (
     total DECIMAL(14,2) NOT NULL,
     CONSTRAINT PK_Hecho_Ventas PRIMARY KEY (tiempo_key, cliente_key, producto_key, canal_key, vendedor_key, region_cliente_key, region_venta_key, orden_id),
     CONSTRAINT FK_Hecho_Ventas_tiempo_key FOREIGN KEY (tiempo_key) REFERENCES dbo.Dim_Tiempo (tiempo_key),
+    CONSTRAINT FK_Hecho_Ventas_mes_key FOREIGN KEY (mes_key) REFERENCES dbo.Dim_Mes (mes_key),
     CONSTRAINT FK_Hecho_Ventas_cliente_key FOREIGN KEY (cliente_key) REFERENCES dbo.Dim_Cliente (cliente_key),
     CONSTRAINT FK_Hecho_Ventas_producto_key FOREIGN KEY (producto_key) REFERENCES dbo.Dim_Producto (producto_key),
     CONSTRAINT FK_Hecho_Ventas_canal_key FOREIGN KEY (canal_key) REFERENCES dbo.Dim_Canal (canal_key),

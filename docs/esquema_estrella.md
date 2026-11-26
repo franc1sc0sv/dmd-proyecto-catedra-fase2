@@ -4,7 +4,7 @@ Tres estrellas, una por proceso de negocio, con dimensiones compartidas (Fase 1,
 
 ```mermaid
 erDiagram
-    Dim_Mes ||--o{ Dim_Tiempo : "mes_key"
+    Dim_Mes ||--o{ Hecho_Ventas : "mes_key"
     Dim_Mes ||--o{ Hecho_Finanzas_Mensual : "mes_key"
     Dim_Tiempo ||--o{ Hecho_Ventas : "tiempo_key"
     Dim_Cliente ||--o{ Hecho_Ventas : "cliente_key"
@@ -18,6 +18,7 @@ erDiagram
 
     Hecho_Ventas {
         int tiempo_key PK,FK
+        int mes_key FK
         int cliente_key PK,FK
         int producto_key PK,FK
         int canal_key PK,FK
@@ -55,7 +56,6 @@ erDiagram
         tinyint trimestre
         tinyint semestre
         smallint anio
-        int mes_key FK
     }
     Dim_Mes {
         int mes_key PK "AAAAMM"
@@ -94,13 +94,16 @@ erDiagram
 
 ## Grano y volumen
 
-| Tabla | Grano | Filas 2024 |
-|---|---|---|
-| Hecho_Ventas | Una orden (un producto por orden) | 850 |
-| Hecho_Finanzas_Mensual | Un mes | 12 |
-| Hecho_Trafico_Web | Un cliente por año | 120 |
-| Dim_Tiempo / Dim_Mes | Un día / un mes | 366 / 12 |
-| Dim_Cliente / Dim_Producto / Dim_Canal / Dim_Vendedor / Dim_Region | Un miembro | 120 / 20 / 2 / 5 / 4 |
+| Tabla | Grano | Tipo (Clase 5) | Filas 2024 |
+|---|---|---|---|
+| Hecho_Ventas | Una orden (un producto por orden) | Transaction fact table | 850 |
+| Hecho_Finanzas_Mensual | Un mes | Periodic snapshot | 12 |
+| Hecho_Trafico_Web | Un cliente por año | Periodic snapshot | 120 |
+| Dim_Tiempo / Dim_Mes | Un día / un mes | SCD 0 / conformada | 366 / 12 |
+| Dim_Cliente / Dim_Producto / Dim_Canal / Dim_Vendedor | Un miembro | SCD tipo 1 | 120 / 20 / 2 / 5 |
+| Dim_Region | Una región | Role-playing, SCD tipo 1 | 4 |
+
+Dimensiones degeneradas: `orden_id` (Hecho_Ventas) y `anio` (Hecho_Trafico_Web). Es un **esquema estrella puro** (Clases 3 y 5): las dimensiones solo se relacionan con los hechos, nunca entre sí. `Dim_Mes` es la dimensión conformada que comparten Ventas y Finanzas para compararlas por mes.
 
 Jerarquías: Tiempo `anio → semestre → trimestre → mes → día`; Producto `categoria → producto`.
 
@@ -108,4 +111,4 @@ Más tablas de control fuera del modelo dimensional: `Etl_Rechazos` y `Etl_Obser
 
 ## Cambios respecto a la Fase 1
 
-Ver [decisiones.md](decisiones.md). En el esquema: `Dim_Tiempo` gana la columna `mes_key` (FK a `Dim_Mes`) y las llaves sustitutas son deterministas en lugar de IDENTITY.
+Ver [decisiones.md](decisiones.md). En el esquema: `Hecho_Ventas` gana la columna `mes_key` (FK a la dimensión conformada `Dim_Mes`) y las llaves sustitutas son deterministas en lugar de IDENTITY.

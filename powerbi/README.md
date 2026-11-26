@@ -22,11 +22,11 @@ Modo: **Importación**. SQL Server usa autenticación de Windows; si Power BI pr
 
 ## 2. Modelo: relaciones
 
-Todas uno a muchos, filtro en una sola dirección (dimensión → hecho).
+Todas uno a muchos, filtro en una sola dirección (dimensión → hecho). Es un esquema **estrella puro**: ninguna dimensión se relaciona con otra (Clase 3).
 
 | Desde (1) | Hacia (N) | Columna | Nota |
 |---|---|---|---|
-| Dim_Mes | Dim_Tiempo | `mes_key` | Así un segmentador de mes filtra ventas **y** finanzas |
+| Dim_Mes | Hecho_Ventas | `mes_key` | Dimensión **conformada**: un segmentador de mes filtra ventas **y** finanzas |
 | Dim_Mes | Hecho_Finanzas_Mensual | `mes_key` | |
 | Dim_Tiempo | Hecho_Ventas | `tiempo_key` | |
 | Dim_Cliente | Hecho_Ventas | `cliente_key` | |
@@ -40,7 +40,7 @@ Todas uno a muchos, filtro en una sola dirección (dimensión → hecho).
 
 **Dimensión con dos roles (Dim_Region).** Power BI permite una sola relación activa entre dos tablas. Duplica la consulta: clic derecho en `Dim_Region` → **Referencia**, nómbrala `Dim_Region_Cliente`. Así hay un segmentador "Región de la venta" y otro "Región del cliente" (difieren en 638 de 850 órdenes).
 
-**Tabla calendario.** `Dim_Tiempo` ya es el calendario (366 días de 2024): **Herramientas de tabla → Marcar como tabla de fechas → `fecha`**. Ordena `nombre_mes` por `mes_numero` (en Dim_Tiempo y Dim_Mes).
+**Tabla calendario.** `Dim_Tiempo` ya es el calendario (366 días de 2024): **Herramientas de tabla → Marcar como tabla de fechas → `fecha`**. Ordena `nombre_mes` por `mes_numero` (en Dim_Tiempo y Dim_Mes). Para análisis por mes usa **Dim_Mes** (filtra ambos hechos); Dim_Tiempo sirve para el detalle diario y para `DATEADD` en el crecimiento.
 
 **Ventas vs. Finanzas.** No se concilian (ventas $705,113.80 vs. ingresos $2,331,474.57). Se comparan solo por mes usando `Dim_Mes`; no relaciones Hecho_Ventas con Hecho_Finanzas_Mensual.
 

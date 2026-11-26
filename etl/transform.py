@@ -242,6 +242,7 @@ def transformar(hojas: dict[str, pd.DataFrame], segmentos: pd.DataFrame | None =
 
     hv = pd.DataFrame({
         "tiempo_key": [d.year * 10000 + d.month * 100 + d.day for d in ven["fecha"]],
+        "mes_key": [d.year * 100 + d.month for d in ven["fecha"]],
         "cliente_key": ven["cliente_id"].map(k_cli),
         "producto_key": ven["producto"].map(k_prod),
         "canal_key": ven["canal"].map(k_canal),

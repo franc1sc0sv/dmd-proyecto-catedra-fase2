@@ -22,10 +22,10 @@ Crecimiento ventas % =
 // Diciembre 2024 llega solo al día 20: mostrar la nota en el visual o excluirlo (Fase 1, 3.2).
 Mes parcial =
     VAR ultimaGlobal = CALCULATE ( MAX ( Dim_Tiempo[fecha] ), ALL ( Dim_Tiempo ), ALL ( Dim_Mes ), Hecho_Ventas )
-    RETURN IF ( MAX ( Dim_Tiempo[mes_key] ) = YEAR ( ultimaGlobal ) * 100 + MONTH ( ultimaGlobal )
+    RETURN IF ( MAX ( Dim_Mes[mes_key] ) = YEAR ( ultimaGlobal ) * 100 + MONTH ( ultimaGlobal )
                 && ultimaGlobal < EOMONTH ( ultimaGlobal, 0 ), 1, 0 )
 
-// ---------------------------------------------------------------- Finanzas (filtrar por Dim_Mes)
+// ---------------------------------------------------------------- Finanzas (filtrar por Dim_Mes, la dimensión conformada)
 Ingresos = SUM ( Hecho_Finanzas_Mensual[ingresos] )                    // [2,331,474.57]
 Costo ventas = SUM ( Hecho_Finanzas_Mensual[costo_ventas] )
 Gastos operativos = SUM ( Hecho_Finanzas_Mensual[gastos_operativos] )

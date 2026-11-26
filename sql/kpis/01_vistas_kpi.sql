@@ -22,16 +22,17 @@ GO
 -- ------------------------------------------------------------ Ventas, por mes
 CREATE OR ALTER VIEW dbo.vw_KPI_Ventas_Mensual AS
 WITH base AS (
-    SELECT t.anio, t.mes_key, t.mes_numero, t.nombre_mes,
+    SELECT m.anio, m.mes_key, m.mes_numero, m.nombre_mes,
            SUM(v.total) AS ventas,
            COUNT(DISTINCT v.orden_id) AS ordenes,
            COUNT(DISTINCT v.cliente_key) AS clientes,
            SUM(CASE WHEN c.canal = N'E-commerce' THEN v.total ELSE 0 END) AS ventas_ecommerce,
            MAX(t.fecha) AS ultima_fecha
     FROM dbo.Hecho_Ventas v
+    JOIN dbo.Dim_Mes    m ON m.mes_key    = v.mes_key
     JOIN dbo.Dim_Tiempo t ON t.tiempo_key = v.tiempo_key
     JOIN dbo.Dim_Canal  c ON c.canal_key  = v.canal_key
-    GROUP BY t.anio, t.mes_key, t.mes_numero, t.nombre_mes
+    GROUP BY m.anio, m.mes_key, m.mes_numero, m.nombre_mes
 )
 SELECT
     anio, mes_key, mes_numero, nombre_mes, ventas, ordenes, clientes,
