@@ -6,6 +6,7 @@
 | `kpis/01_vistas_kpi.sql` | `vw_KPI_Anual`, `vw_KPI_Finanzas_Mensual`, `vw_KPI_Ventas_Mensual` | Sí |
 | `kpis/02_consultas_kpi.sql` | Consultas de evidencia para capturas del informe | No: correr en SSMS |
 | `olap/01_vistas_cubo.sql` | `vw_Cubo_Ventas` con `ROLLUP` + `CUBE` | Sí |
+| `olap/02_operadores_olap.sql` | Drill, roll, slice, dice y pivot (Clase 15.4) | No: correr en SSMS |
 
 Conexión en SSMS: servidor `localhost`, autenticación de Windows, marcar *Trust server certificate*.
 

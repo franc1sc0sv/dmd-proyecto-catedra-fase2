@@ -10,4 +10,4 @@ Hojas: Ventas (850 × 11), Clientes (120 × 7), Finanzas_Mensual (12 × 8, más 
 ## `sample/`
 **Lo genera el ETL; no editar a mano.** Un CSV por tabla del contrato (UTF-8 con BOM, fechas `AAAA-MM-DD`, punto decimal), con las mismas llaves que la BD. Es el extracto **completo**, no un subconjunto.
 
-`reporte_carga.md` documenta la última carga: conciliación, rechazos y observaciones.
+`perfil_atributos.md` es el perfilado del Excel antes de limpiar. `reporte_carga.md` documenta la última carga: conciliación, rechazos y observaciones.

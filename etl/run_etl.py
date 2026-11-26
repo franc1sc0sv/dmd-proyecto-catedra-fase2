@@ -9,7 +9,7 @@ import sys
 
 import pandas as pd
 
-from . import config, load, validate
+from . import config, load, perfilado, validate
 from .extract import extraer, sha256
 from .transform import transformar
 
@@ -26,6 +26,9 @@ def main() -> int:
 
     print(f"1/4 Extrayendo {config.EXCEL.name}")
     hojas = extraer(config.EXCEL)
+    config.SAMPLE.mkdir(parents=True, exist_ok=True)
+    perfilado.escribir(perfilado.perfilar(hojas), config.SAMPLE)
+    print("    perfilado -> data/sample/perfil_atributos.md")
 
     segmentos = None
     if config.SEGMENTOS.exists():
