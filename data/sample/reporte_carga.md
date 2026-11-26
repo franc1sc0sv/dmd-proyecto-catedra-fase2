@@ -1,6 +1,6 @@
 # Reporte de carga
 
-Generado: 2026-11-26 01:55 · Excel SHA256 `7e9568e27043…` · BD: sí · **Resultado: OK**
+Generado: 2026-11-26 02:10 · Excel SHA256 `7e9568e27043…` · BD: sí · **Resultado: OK**
 
 ## Conciliación
 

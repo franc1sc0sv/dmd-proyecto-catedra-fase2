@@ -24,7 +24,7 @@ Qué concepto de cada clase (UIA1 a UIA5) aplica el proyecto, dónde está y en 
 | 9 · ETL | Técnica de **consolidación**: varias fuentes (3 hojas) → un destino que guarda una copia (el DW) | `etl/` | 2 |
 | 9 · ETL | Extracción **pull por lotes** y **carga total**; no se requiere CDC (año fiscal cerrado, sin marcas de cambio) | `etl/run_etl.py`, `etl/load.py` | 2 |
 | 9 · ETL | Motores de extracción, transformación y carga + **servicios de administración y operación** (log de errores, estadísticas) | `extract.py`, `transform.py`, `load.py`; `Etl_Rechazos`, `Etl_Observaciones`, `reporte_carga.md` | 2 |
-| 9 · ETL | Tipos de ETL: *basado en motor* (Pentaho, gráfico) vs. código propio. El ETL en Python es código propio, no un ETL basado en motor; ver `decisiones.md` D4 | — | 5 |
+| 9 · ETL | Tipos de ETL: *basado en motor* (diseño gráfico + motores + administración), el tipo de herramienta que es Pentaho (citado en la bibliografía de la U3 y en la Clase 20). El ETL en Python es código propio; ver `decisiones.md` D4 | — | 5 |
 | 10 · OLAP | Tipos: **MOLAP** (cubo SSAS multidimensional, Fase 1) y **ROLAP** (vista `vw_Cubo_Ventas` sobre las tablas relacionales) | `olap/`, `sql/olap/01_vistas_cubo.sql` | 4 |
 | 10 · OLAP | Elementos: esquema, **cubo**, **jerarquía** (año → semestre → trimestre → mes → día; categoría → producto), **nivel**, **miembro**, roles, **MDX** | `olap/README.md`, `olap/ssas/kpis_calculados.mdx` | 4 y 5 |
 | 10 · OLAP | **Cubo virtual**: cruzar hechos por dimensiones comunes. Ventas y Finanzas se cruzan por la dimensión conformada Dim_Mes | `mes_key` en ambos hechos | 5 |

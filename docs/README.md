@@ -1,12 +1,30 @@
-# Documentación
+# Documentación: material para el informe
 
-| Archivo | Contenido | Sección del informe |
+**Qué es esta carpeta:** textos y tablas listos para adaptar al PDF de la entrega. Cada archivo indica a qué sección del informe sirve.
+
+**Para quién:** quien redacte el informe y cualquiera que necesite entender una decisión del diseño.
+
+## Qué usar en cada sección del informe
+
+El PDF de la Fase 2 pide 6 secciones; la rúbrica además evalúa definición del problema, cronograma, ortografía y puntualidad.
+
+| Sección del informe | Qué usar | Dónde |
 |---|---|---|
-| [diccionario_datos.md](diccionario_datos.md) | Tablas, columnas, tipos, llaves (generado desde el contrato) | 5. Especificaciones del diseño |
-| [esquema_estrella.md](esquema_estrella.md) | Diagrama, grano, volúmenes, jerarquías | 5 |
-| [reglas_limpieza.md](reglas_limpieza.md) | Cada regla, su justificación y lo observado | 2. Recolección y preparación |
-| [kpis.md](kpis.md) | Fórmula, grano, filtros y valor 2024 de cada KPI | 3. Cálculo de KPIs |
-| [marco_teorico.md](marco_teorico.md) | Concepto de cada clase de las unidades 3–5 → dónde se aplica → sección del informe | Todas |
-| [decisiones.md](decisiones.md) | Ajustes respecto a la Fase 1 y su justificación (algunos abiertos) | 5 |
-| `../data/sample/reporte_carga.md` | Evidencia de la carga: conciliación, rechazos, KPIs verificados | 2 y 3 |
-| `../data/sample/perfil_atributos.md` | Informe de estado de los atributos del Excel (Clase 15.3) | 2 |
+| 1. Documentación y presentación | Portada formal y capturas de cada etapa (cada README dice qué capturar) | Los README de cada carpeta |
+| 2. Recolección y preparación (ETL) | Reglas de limpieza con su justificación, perfilado del Excel y reporte de carga | [reglas_limpieza.md](reglas_limpieza.md), `../data/sample/perfil_atributos.md`, `../data/sample/reporte_carga.md` |
+| 3. Cálculo de KPIs | Fórmula, grano, valor 2024 y comprobación manual de cada KPI | [kpis.md](kpis.md), `../sql/kpis/02_consultas_kpi.sql` |
+| 4. Herramientas y técnicas | Cubo, operadores OLAP, K-means | `../olap/README.md`, `../sql/olap/02_operadores_olap.sql`, `../mining/README.md` |
+| 5. Especificaciones del diseño (final) | Diagrama, diccionario de datos y **cambios respecto a la Fase 1 con su justificación** | [esquema_estrella.md](esquema_estrella.md), [diccionario_datos.md](diccionario_datos.md), [decisiones.md](decisiones.md) |
+| 6. Reportes e interpretación | Páginas del dashboard e interpretación para Andina | `../powerbi/README.md` |
+| Todas | Qué concepto de cada clase (unidades 1 a 5) se aplicó y dónde, para citar el material del curso | [marco_teorico.md](marco_teorico.md) |
+
+## Archivos
+
+| Archivo | Qué es |
+|---|---|
+| [diccionario_datos.md](diccionario_datos.md) | Cada tabla y columna: tipo, llave, **de qué columna del Excel sale** y su clasificación (Clase 5). Se genera desde `etl/contrato.py`: no editarlo a mano |
+| [esquema_estrella.md](esquema_estrella.md) | Diagrama del modelo, grano, volúmenes y jerarquías. También está el diagrama original de la Fase 1 (`esquema_estrella_fase1.png`) |
+| [reglas_limpieza.md](reglas_limpieza.md) | Cada problema del Excel, la regla que lo trata y cuántos casos hubo |
+| [kpis.md](kpis.md) | Los 10 KPIs: fórmula, unidad, valor 2024 y notas (p. ej. diciembre incompleto) |
+| [decisiones.md](decisiones.md) | En qué se apartó la implementación de la Fase 1 y por qué. **Algunas siguen abiertas** (Pentaho vs. Python, Power BI en vivo vs. importación) |
+| [marco_teorico.md](marco_teorico.md) | Mapa clase → concepto → dónde se aplica → sección del informe |

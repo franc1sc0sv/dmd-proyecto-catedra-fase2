@@ -1,32 +1,36 @@
-# Parte 4: Power BI
+# Parte 4: Power BI e interpretación
 
-Reporte de Ventas y Finanzas sobre el contrato de datos (`docs/diccionario_datos.md`). Se puede empezar **hoy** contra `data/sample/` y cambiar a SQL Server con un solo parámetro, sin rehacer el modelo.
+**Qué es esta carpeta:** todo lo necesario para armar el reporte de Power BI de Ventas y Finanzas: consultas listas para pegar, relaciones, medidas de los KPIs y un boceto de las páginas.
 
-## 1. Conexión (fuente intercambiable)
+**Para quién:** la persona de la parte 4. **Puedes empezar hoy**, sin SQL Server, usando los CSV de `data/sample/`. Cuando la base esté lista se cambia la fuente con un solo parámetro, sin rehacer nada.
 
-1. Power BI Desktop → **Inicio → Transformar datos → Administrar parámetros → Nuevo**. Crea 4 parámetros de tipo Texto:
+## Qué ya está hecho
 
-   | Parámetro | Valor para empezar | Valor con la BD lista |
-   |---|---|---|
-   | `FuenteDatos` | `CSV` | `SQL` |
-   | `CarpetaMuestra` | ruta absoluta a `data\sample` de tu clon, p. ej. `D:\dev_tools\dmd-proyecto-catedra-fase2\data\sample` | (no se usa) |
-   | `Servidor` | `localhost` | `localhost` |
-   | `BaseDatos` | `AndinaRetailDW` | `AndinaRetailDW` |
+- 10 consultas de Power Query (`power_query/*.pq`), una por tabla, con los tipos correctos. Leen los CSV o SQL Server según un parámetro.
+- La tabla de relaciones del modelo (paso 3).
+- Las medidas DAX de los 10 KPIs (`medidas.dax`), cada una con el valor que debe dar.
+- El boceto de 5 páginas (paso 5).
 
-2. Para cada archivo de `power_query/` (10 tablas): **Nueva fuente → Consulta en blanco → Editor avanzado**, pega el contenido y nombra la consulta igual que el archivo (`Hecho_Ventas`, `Dim_Cliente`, …).
-3. **Cerrar y aplicar.** Para pasar a SQL Server: cambia `FuenteDatos` a `SQL` y actualiza. Las columnas y tipos son idénticos (los genera `python -m etl.generar` desde el contrato).
+> ⚠️ Nada de esto se ha abierto todavía en Power BI: está escrito y revisado, pero no probado. Si una consulta da error, avisa en el grupo.
 
-Modo: **Importación**. SQL Server usa autenticación de Windows; si Power BI pregunta por cifrado, acepta la conexión sin cifrar (es un servidor local de desarrollo).
+## Tus pasos
 
-> Los archivos `.pq` se generan automáticamente; si cambia el contrato, se regeneran y se vuelven a pegar.
+**1. Crear los parámetros.** Power BI Desktop → **Inicio → Transformar datos → Administrar parámetros → Nuevo**. Crea 4, de tipo Texto:
 
-## 2. Modelo: relaciones
+| Parámetro | Valor para empezar | Valor cuando la BD esté lista |
+|---|---|---|
+| `FuenteDatos` | `CSV` | `SQL` |
+| `CarpetaMuestra` | ruta completa a `data\sample` en tu PC, p. ej. `D:\dev_tools\dmd-proyecto-catedra-fase2\data\sample` | (no se usa) |
+| `Servidor` | `localhost` | `localhost` |
+| `BaseDatos` | `AndinaRetailDW` | `AndinaRetailDW` |
 
-Todas uno a muchos, filtro en una sola dirección (dimensión → hecho). Es un esquema **estrella puro**: ninguna dimensión se relaciona con otra (Clase 3).
+**2. Cargar las 10 tablas.** Por cada archivo de `power_query/`: **Nueva fuente → Consulta en blanco → Editor avanzado**, pega el contenido y ponle a la consulta **el mismo nombre que el archivo** (`Hecho_Ventas`, `Dim_Cliente`, …). Luego **Cerrar y aplicar**. Modo: **Importación**.
+
+**3. Crear las relaciones** (vista de modelo). Todas son uno a muchos, con filtro en una sola dirección (de la dimensión al hecho):
 
 | Desde (1) | Hacia (N) | Columna | Nota |
 |---|---|---|---|
-| Dim_Mes | Hecho_Ventas | `mes_key` | Dimensión **conformada**: un segmentador de mes filtra ventas **y** finanzas |
+| Dim_Mes | Hecho_Ventas | `mes_key` | Dimensión **compartida**: un filtro de mes afecta ventas **y** finanzas |
 | Dim_Mes | Hecho_Finanzas_Mensual | `mes_key` | |
 | Dim_Tiempo | Hecho_Ventas | `tiempo_key` | |
 | Dim_Cliente | Hecho_Ventas | `cliente_key` | |
@@ -34,40 +38,50 @@ Todas uno a muchos, filtro en una sola dirección (dimensión → hecho). Es un 
 | Dim_Producto | Hecho_Ventas | `producto_key` | |
 | Dim_Canal | Hecho_Ventas | `canal_key` | |
 | Dim_Vendedor | Hecho_Ventas | `vendedor_key` | |
-| Dim_Region | Hecho_Ventas | `region_venta_key` | **Región de la venta** (activa) |
-| Dim_Region_Cliente | Hecho_Ventas | `region_cliente_key` | Ver abajo |
+| Dim_Region | Hecho_Ventas | `region_venta_key` | Región **donde se vendió** |
+| Dim_Region_Cliente | Hecho_Ventas | `region_cliente_key` | Región **del cliente** (ver abajo) |
 | Dim_Region_Cliente | Hecho_Trafico_Web | `region_cliente_key` | |
 
-**Dimensión con dos roles (Dim_Region).** Power BI permite una sola relación activa entre dos tablas. Duplica la consulta: clic derecho en `Dim_Region` → **Referencia**, nómbrala `Dim_Region_Cliente`. Así hay un segmentador "Región de la venta" y otro "Región del cliente" (difieren en 638 de 850 órdenes).
+- **Dos regiones.** Power BI no permite dos relaciones activas entre las mismas tablas. Clic derecho en la consulta `Dim_Region` → **Referencia** y nombra la nueva `Dim_Region_Cliente`. Así tendrás un filtro "Región de la venta" y otro "Región del cliente" (son distintas en 638 de 850 órdenes).
+- **Calendario.** `Dim_Tiempo` ya es el calendario: **Herramientas de tabla → Marcar como tabla de fechas → `fecha`**. Ordena `nombre_mes` por `mes_numero` en Dim_Tiempo y en Dim_Mes.
+- **Mes en ejes y filtros:** usa **Dim_Mes**, porque filtra ventas y finanzas. Las medidas `Crecimiento ventas %` y `Mes parcial` están hechas para Dim_Mes en el eje. Dim_Tiempo es solo para el detalle diario.
+- **No relaciones Hecho_Ventas con Hecho_Finanzas_Mensual.** No concilian (ventas $705,113.80 vs. ingresos $2,331,474.57); se comparan solo por mes con Dim_Mes.
+- Oculta las columnas `*_key` en la vista de informe.
 
-**Tabla calendario.** `Dim_Tiempo` ya es el calendario (366 días de 2024): **Herramientas de tabla → Marcar como tabla de fechas → `fecha`**. Ordena `nombre_mes` por `mes_numero` (en Dim_Tiempo y Dim_Mes). Para análisis por mes usa **Dim_Mes** (filtra ambos hechos); Dim_Tiempo sirve para el detalle diario y para `DATEADD` en el crecimiento.
+Es un esquema **estrella**: ninguna dimensión se relaciona con otra (Clase 3).
 
-**Ventas vs. Finanzas.** No se concilian (ventas $705,113.80 vs. ingresos $2,331,474.57). Se comparan solo por mes usando `Dim_Mes`; no relaciones Hecho_Ventas con Hecho_Finanzas_Mensual.
+**4. Crear las medidas.** Crea una tabla vacía `_Medidas` (**Inicio → Especificar datos**) y agrega cada medida de `medidas.dax` (**Nueva medida**, pega una por una). Pon una tarjeta por medida **sin filtros** y compara con el valor entre corchetes del archivo. Por ejemplo, `Ventas` = 705,113.80. Para el crecimiento, haz una tabla con `Dim_Mes[nombre_mes]`: mayo debe dar −22.84 % y octubre +49.08 %, y solo diciembre debe tener `Mes parcial` = 1.
 
-Oculta las columnas `*_key` en la vista de informe.
-
-## 3. Medidas
-
-`medidas.dax`: las 10 de la Fase 1 más medidas base. Cada una trae su valor esperado para 2024. Comprueba que las tarjetas sin filtros den esos valores (también están en `dbo.vw_KPI_Anual` y en `data/sample/reporte_carga.md`).
-
-## 4. Boceto de páginas
+**5. Armar las páginas** (boceto; Clase 12: datos → formato → boceto → interactividad):
 
 | Página | Pregunta de negocio | Visuales |
 |---|---|---|
-| **Resumen** | ¿Cómo cerró 2024? | 10 tarjetas KPI; margen bruto en rojo si < 40 % |
+| **Resumen** | ¿Cómo cerró 2024? | 10 tarjetas KPI; margen bruto en rojo si < 40 % (medida `Alerta margen bruto`) |
 | **Ventas** | ¿Dónde crece, quién compra y por qué canal? | Línea de ventas por mes y canal; crecimiento % mensual (diciembre marcado como parcial); barras por categoría y producto; matriz región venta × región cliente; ticket por canal |
-| **Finanzas** | ¿Es rentable y hay liquidez mes a mes? | Márgenes bruto/neto por mes con línea de 40 %; flujo de caja acumulado; ROI por mes; columnas ingresos/costo/gastos |
-| **Clientes** | ¿Qué segmentos pesan más? | Ventas y ticket por `segmento` y `segmento_cluster` (K-means); tasa de conversión web por región y segmento; perfil de grupos (`mining/output/perfil_segmentos.csv`) |
-| **Ventas vs. Ingresos** | ¿El crecimiento comercial acompaña al financiero? | Ventas e ingresos por mes (doble eje) con la nota de que no concilian |
+| **Finanzas** | ¿Es rentable y hay liquidez mes a mes? | Márgenes bruto y neto por mes con línea de 40 %; flujo de caja acumulado; ROI por mes; columnas ingresos, costo y gastos |
+| **Clientes** | ¿Qué segmentos pesan más? | Ventas y ticket por `segmento` y por `segmento_cluster` (K-means); tasa de conversión web por región y segmento |
+| **Ventas vs. Ingresos** | ¿El crecimiento comercial acompaña al financiero? | Ventas e ingresos por mes (doble eje), con una nota de que no concilian |
 
-Segmentadores comunes: Dim_Mes (mes, trimestre), categoría, canal, región, segmento, grupo K-means.
+Filtros comunes en todas las páginas: mes y trimestre (Dim_Mes), categoría, canal, región, segmento y grupo K-means.
 
-## 5. Versionado
+**6. Guardar como proyecto.** **Archivo → Guardar como → Proyecto de Power BI (`.pbip`)** en `powerbi/AndinaRetail/`. Es texto, así que Git muestra los cambios. El `.pbix` no se sube; se exporta solo para la entrega. Que **una sola persona** edite el proyecto a la vez.
 
-Guarda como **Proyecto de Power BI (`.pbip`)** en `powerbi/AndinaRetail/`: **Archivo → Guardar como → tipo Proyecto de Power BI**. Es texto (TMDL/JSON), así que Git muestra diferencias y se revisa en PR. `.gitignore` excluye la caché (`.pbi/cache.abf`, `localSettings.json`) y los `.pbix`; el `.pbix` final se exporta solo para la entrega.
+**7. Cuando la base esté lista:** cambia `FuenteDatos` a `SQL` y pulsa **Actualizar**. Si Power BI pregunta por el cifrado, acepta la conexión sin cifrar (es un servidor local).
 
-Una sola persona edita el `.pbip` a la vez (los cambios simultáneos en el modelo se fusionan mal).
+**8. Interpretación (sección 6 del informe):** una o dos frases de negocio por página. Qué pasó, por qué y qué haría Andina (Clase 17: ¿qué pasó?, ¿por qué?).
 
-## Alternativa: conexión en vivo al cubo (lo que propuso la Fase 1)
+## Archivos
 
-Con conexión en vivo a SSAS, el modelo y las medidas viven en el cubo (MDX, `olap/`) y no en Power BI: los pasos 2 y 3 no aplican, y los visuales hechos contra la muestra se deben volver a enlazar. Ver `docs/decisiones.md`.
+| Archivo | Qué es | ¿Lo editas? |
+|---|---|---|
+| `power_query/*.pq` | Las 10 consultas. Se generan desde `etl/contrato.py` con `python -m etl.generar` | No |
+| `medidas.dax` | Medidas de los KPIs con el valor esperado de cada una | Puedes agregar medidas |
+| `AndinaRetail/` | El proyecto `.pbip` (lo creas en el paso 6) | Sí |
+
+## Cómo sabes que terminaste
+
+Las tarjetas sin filtros dan los valores de `medidas.dax`, las 5 páginas responden su pregunta, el proyecto está guardado como `.pbip` y cada página tiene su interpretación escrita.
+
+## Alternativa: conexión en vivo al cubo
+
+Es lo que propuso la Fase 1. En ese caso el modelo y las medidas viven en el cubo SSAS (`olap/`), no en Power BI: los pasos 1 a 4 no aplican y hay que esperar a que el cubo esté desplegado. Ver [`docs/decisiones.md`](../docs/decisiones.md), D5.

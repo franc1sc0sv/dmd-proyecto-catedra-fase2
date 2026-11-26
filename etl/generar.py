@@ -62,18 +62,20 @@ def power_query(t: contrato.Tabla) -> str:
     Usa los parámetros FuenteDatos ("CSV"|"SQL"), CarpetaMuestra, Servidor y BaseDatos."""
     tipos = ",\n        ".join(f'{{"{c.nombre}", {_tipo_m(c.tipo_sql)}}}' for c in t.columnas)
     return f"""// {t.nombre}: generado por `python -m etl.generar` desde etl/contrato.py
+// Mismas columnas y mismos tipos desde CSV o desde SQL Server (los tipos se fijan al final en ambos casos).
 let
+    Tipos = {{
+        {tipos}
+    }},
     DesdeSQL = () => Sql.Database(Servidor, BaseDatos){{[Schema = "dbo", Item = "{t.nombre}"]}}[Data],
     DesdeCSV = () =>
         let
             Csv = Csv.Document(File.Contents(CarpetaMuestra & "\\{t.nombre}.csv"),
-                               [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
-            Encabezados = Table.PromoteHeaders(Csv, [PromoteAllScalars = true])
+                               [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv])
         in
-            Table.TransformColumnTypes(Encabezados, {{
-        {tipos}
-            }}, "en-US"),
-    Resultado = if FuenteDatos = "SQL" then DesdeSQL() else DesdeCSV()
+            Table.PromoteHeaders(Csv, [PromoteAllScalars = true]),
+    Origen = if FuenteDatos = "SQL" then DesdeSQL() else DesdeCSV(),
+    Resultado = Table.TransformColumnTypes(Table.SelectColumns(Origen, List.Transform(Tipos, each _{{0}})), Tipos, "en-US")
 in
     Resultado
 """

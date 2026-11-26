@@ -49,8 +49,12 @@ def cargar_bd(tablas: dict[str, pd.DataFrame]) -> sa.Engine:
     for t in contrato.TABLAS:  # orden del contrato = dimensiones antes que hechos
         df = tablas[t.nombre].astype(object).where(tablas[t.nombre].notna(), None)
         df.to_sql(t.nombre, eng, schema="dbo", if_exists="append", index=False, chunksize=1000)
-    # Solo los scripts que crean vistas; las consultas sueltas de evidencia no se ejecutan aquí.
+    crear_vistas(eng)
+    return eng
+
+
+def crear_vistas(eng: sa.Engine) -> None:
+    """(Re)crea las vistas de KPIs y del cubo. Las consultas sueltas de evidencia no se ejecutan aquí."""
     for carpeta in ("kpis", "olap"):
         for script in sorted((config.SQL_DIR / carpeta).glob("*vistas*.sql")):
             ejecutar_script(eng, script)
-    return eng

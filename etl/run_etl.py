@@ -2,6 +2,8 @@
 
     python -m etl.run_etl            # Excel -> limpieza -> data/sample + SQL Server + validación
     python -m etl.run_etl --sin-bd   # igual, pero sin SQL Server (solo genera data/sample)
+    python -m etl.run_etl --validar-bd
+        # NO carga: valida una BD que cargó otra herramienta (p. ej. Pentaho) contra el Excel
 """
 
 import argparse
@@ -16,7 +18,10 @@ from .transform import transformar
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--sin-bd", action="store_true", help="no cargar SQL Server; solo generar data/sample")
+    modo = ap.add_mutually_exclusive_group()
+    modo.add_argument("--sin-bd", action="store_true", help="no cargar SQL Server; solo generar data/sample")
+    modo.add_argument("--validar-bd", action="store_true",
+                      help="no cargar: validar la BD actual (cargada por otra herramienta) contra el Excel")
     args = ap.parse_args()
     sys.stdout.reconfigure(encoding="utf-8")  # consola de Windows
 
@@ -43,7 +48,12 @@ def main() -> int:
     load.escribir_muestra(tablas)
     print(f"    extracto -> {config.SAMPLE.relative_to(config.RAIZ)}")
     resumen_bd = None
-    if not args.sin_bd:
+    if args.validar_bd:
+        eng = load.motor()
+        load.crear_vistas(eng)  # las vistas de KPIs se calculan sobre lo que cargó la otra herramienta
+        print(f"    SQL Server: sin cargar; se valida lo que ya hay en {config.DB_SERVER}/{config.DB_NAME}")
+        resumen_bd = validate.resumen_bd(eng)
+    elif not args.sin_bd:
         eng = load.cargar_bd(tablas)
         print(f"    SQL Server -> {config.DB_SERVER}/{config.DB_NAME}")
         resumen_bd = validate.resumen_bd(eng)

@@ -14,16 +14,24 @@ Ventas por cliente = DIVIDE ( [Ventas], [Clientes con compra] )        // [5,875
 Ventas E-commerce = CALCULATE ( [Ventas], Dim_Canal[canal] = "E-commerce" )
 Participacion e-commerce % = DIVIDE ( [Ventas E-commerce], [Ventas] )  // [44.0 %]
 
-// Crecimiento mes contra mes. Requiere Dim_Tiempo marcada como tabla de fechas.
-Ventas mes anterior = CALCULATE ( [Ventas], DATEADD ( Dim_Tiempo[fecha], -1, MONTH ) )
-Crecimiento ventas % =
+// Crecimiento mes contra mes. Usar con Dim_Mes en el eje (no con Dim_Tiempo): en la estrella,
+// Dim_Mes y Dim_Tiempo no se filtran entre sí, así que el mes anterior se busca en Dim_Mes.
+Ventas mes anterior =
+    VAR anio = MAX ( Dim_Mes[anio] )
+    VAR mes = MAX ( Dim_Mes[mes_numero] )
+    RETURN IF ( HASONEVALUE ( Dim_Mes[mes_key] ),
+        CALCULATE ( [Ventas], FILTER ( ALL ( Dim_Mes ), Dim_Mes[anio] = anio && Dim_Mes[mes_numero] = mes - 1 ) ) )
+Crecimiento ventas % =                                                  // [mayo −22.84 %, octubre +49.08 %]
     VAR anterior = [Ventas mes anterior]
     RETURN IF ( NOT ISBLANK ( anterior ), DIVIDE ( [Ventas] - anterior, anterior ) )
-// Diciembre 2024 llega solo al día 20: mostrar la nota en el visual o excluirlo (Fase 1, 3.2).
+// Diciembre 2024 llega solo al día 20: su crecimiento no es comparable (Fase 1, 3.2).
+// 1 solo en el último mes con ventas, si la última venta no cae en fin de mes. Usar con Dim_Mes en el eje.
 Mes parcial =
-    VAR ultimaGlobal = CALCULATE ( MAX ( Dim_Tiempo[fecha] ), ALL ( Dim_Tiempo ), ALL ( Dim_Mes ), Hecho_Ventas )
-    RETURN IF ( MAX ( Dim_Mes[mes_key] ) = YEAR ( ultimaGlobal ) * 100 + MONTH ( ultimaGlobal )
-                && ultimaGlobal < EOMONTH ( ultimaGlobal, 0 ), 1, 0 )
+    VAR ultima = CALCULATE ( MAX ( Hecho_Ventas[tiempo_key] ), ALL ( Hecho_Ventas ) )   // AAAAMMDD
+    VAR fechaUltima = DATE ( INT ( ultima / 10000 ), MOD ( INT ( ultima / 100 ), 100 ), MOD ( ultima, 100 ) )
+    RETURN IF ( HASONEVALUE ( Dim_Mes[mes_key] )
+                && SELECTEDVALUE ( Dim_Mes[mes_key] ) = INT ( ultima / 100 )
+                && fechaUltima < EOMONTH ( fechaUltima, 0 ), 1, 0 )
 
 // ---------------------------------------------------------------- Finanzas (filtrar por Dim_Mes, la dimensión conformada)
 Ingresos = SUM ( Hecho_Finanzas_Mensual[ingresos] )                    // [2,331,474.57]
