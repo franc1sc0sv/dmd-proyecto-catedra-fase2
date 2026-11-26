@@ -27,7 +27,7 @@ Cada carpeta tiene un README con el mismo orden: **qué es, qué ya está hecho,
 Requisitos: Windows, Python 3.12 y Git. Para usar la base: SQL Server con autenticación de Windows y **ODBC Driver 18 for SQL Server**. Las partes 3 y 4 pueden empezar sin SQL Server.
 
 ```powershell
-git clone <url-del-repo> dmd-proyecto-catedra-fase2
+git clone https://github.com/leannsttar/dmd-proyecto-catedra-fase2.git
 cd dmd-proyecto-catedra-fase2
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
