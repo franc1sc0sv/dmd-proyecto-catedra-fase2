@@ -9,7 +9,7 @@ Reporte de Ventas y Finanzas sobre el contrato de datos (`docs/diccionario_datos
    | Parámetro | Valor para empezar | Valor con la BD lista |
    |---|---|---|
    | `FuenteDatos` | `CSV` | `SQL` |
-   | `CarpetaMuestra` | ruta absoluta a `data\sample` de tu clon, p. ej. `D:\dev_tools\andina-retail-dw\data\sample` | (no se usa) |
+   | `CarpetaMuestra` | ruta absoluta a `data\sample` de tu clon, p. ej. `D:\dev_tools\dmd-proyecto-catedra-fase2\data\sample` | (no se usa) |
    | `Servidor` | `localhost` | `localhost` |
    | `BaseDatos` | `AndinaRetailDW` | `AndinaRetailDW` |
 
