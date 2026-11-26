@@ -1,0 +1,4 @@
+﻿observacion_id,hoja,fila_excel,llave_origen,tipo,detalle
+1,Ventas,355,AR-20354,Orden anterior al registro del cliente,CLI-0068: orden 2024-01-24 y registro 2024-03-09
+2,Ventas,551,AR-20550,Orden anterior al registro del cliente,CLI-0030: orden 2024-01-20 y registro 2024-03-06
+3,Ventas,564,AR-20563,Orden anterior al registro del cliente,CLI-0068: orden 2024-02-09 y registro 2024-03-09

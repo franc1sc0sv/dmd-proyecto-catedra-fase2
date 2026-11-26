@@ -1,0 +1,51 @@
+// Medidas base de los 10 KPIs (Fase 1, sección 3). Crear en una tabla vacía "_Medidas".
+// Porcentajes como razón (0.416) con formato %. Definiciones: docs/kpis.md
+// Valores esperados 2024 (sin filtros) entre corchetes; deben coincidir con dbo.vw_KPI_Anual.
+
+// ---------------------------------------------------------------- Ventas
+Ventas = SUM ( Hecho_Ventas[total] )                                   // [705,113.80]
+Ordenes = DISTINCTCOUNT ( Hecho_Ventas[orden_id] )                     // [850]
+Unidades = SUM ( Hecho_Ventas[cantidad] )
+Clientes con compra = DISTINCTCOUNT ( Hecho_Ventas[cliente_key] )      // [120]
+
+Ticket promedio = DIVIDE ( [Ventas], [Ordenes] )                       // [829.55]
+Ventas por cliente = DIVIDE ( [Ventas], [Clientes con compra] )        // [5,875.95]
+
+Ventas E-commerce = CALCULATE ( [Ventas], Dim_Canal[canal] = "E-commerce" )
+Participacion e-commerce % = DIVIDE ( [Ventas E-commerce], [Ventas] )  // [44.0 %]
+
+// Crecimiento mes contra mes. Requiere Dim_Tiempo marcada como tabla de fechas.
+Ventas mes anterior = CALCULATE ( [Ventas], DATEADD ( Dim_Tiempo[fecha], -1, MONTH ) )
+Crecimiento ventas % =
+    VAR anterior = [Ventas mes anterior]
+    RETURN IF ( NOT ISBLANK ( anterior ), DIVIDE ( [Ventas] - anterior, anterior ) )
+// Diciembre 2024 llega solo al día 20: mostrar la nota en el visual o excluirlo (Fase 1, 3.2).
+Mes parcial =
+    VAR ultimaGlobal = CALCULATE ( MAX ( Dim_Tiempo[fecha] ), ALL ( Dim_Tiempo ), ALL ( Dim_Mes ), Hecho_Ventas )
+    RETURN IF ( MAX ( Dim_Tiempo[mes_key] ) = YEAR ( ultimaGlobal ) * 100 + MONTH ( ultimaGlobal )
+                && ultimaGlobal < EOMONTH ( ultimaGlobal, 0 ), 1, 0 )
+
+// ---------------------------------------------------------------- Finanzas (filtrar por Dim_Mes)
+Ingresos = SUM ( Hecho_Finanzas_Mensual[ingresos] )                    // [2,331,474.57]
+Costo ventas = SUM ( Hecho_Finanzas_Mensual[costo_ventas] )
+Gastos operativos = SUM ( Hecho_Finanzas_Mensual[gastos_operativos] )
+Utilidad neta = SUM ( Hecho_Finanzas_Mensual[utilidad_neta] )
+Inversiones = SUM ( Hecho_Finanzas_Mensual[inversiones_realizadas] )
+Flujo caja = SUM ( Hecho_Finanzas_Mensual[flujo_caja] )
+
+Margen bruto % = DIVIDE ( [Ingresos] - [Costo ventas], [Ingresos] )    // [41.6 %]
+Margen neto % = DIVIDE ( [Utilidad neta], [Ingresos] )                 // [26.9 %]
+Indice gastos operativos % = DIVIDE ( [Gastos operativos], [Ingresos] ) // [14.7 %]
+ROI % = DIVIDE ( [Utilidad neta], [Inversiones] )                      // [106.7 %] se recalcula; no promediar retorno_inversion
+
+Flujo caja acumulado =                                                  // [450,917.68] a diciembre
+    VAR anio = MAX ( Dim_Mes[anio] )
+    VAR mes = MAX ( Dim_Mes[mes_numero] )
+    RETURN CALCULATE ( [Flujo caja], FILTER ( ALL ( Dim_Mes ), Dim_Mes[anio] = anio && Dim_Mes[mes_numero] <= mes ) )
+
+Alerta margen bruto = IF ( [Margen bruto %] < 0.40, 1, 0 )              // marzo, abril y mayo
+
+// ---------------------------------------------------------------- Tráfico web (anual por cliente)
+Visitas web = SUM ( Hecho_Trafico_Web[visitas_web] )                   // [25,374]
+Conversiones web = SUM ( Hecho_Trafico_Web[conversiones_web] )         // [2,285]
+Tasa conversion web % = DIVIDE ( [Conversiones web], [Visitas web] )   // [9.0 %]

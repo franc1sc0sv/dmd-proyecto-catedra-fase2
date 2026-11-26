@@ -1,0 +1,14 @@
+# Decisiones y ajustes respecto a la Fase 1
+
+El PDF de la Fase 2 pide documentar "el diseño final tal como quedó implementado, incluyendo cualquier ajuste respecto a la propuesta original y su justificación" (sección 5). Esta es la lista de trabajo; el equipo la confirma o la cambia antes de pasarla al informe.
+
+| # | Fase 1 decía | Implementado | Justificación | Estado |
+|---|---|---|---|---|
+| D1 | Llaves sustitutas `IDENTITY` | Llaves deterministas asignadas por el ETL: `tiempo_key` = AAAAMMDD, `mes_key` = AAAAMM, las demás 1..n en orden alfabético del valor natural | El extracto CSV y la BD tienen exactamente las mismas llaves, así que la minería y Power BI pueden trabajar con la muestra y cambiar a la BD sin remapear. La carga total produce siempre las mismas llaves | Aplicado |
+| D2 | `Dim_Tiempo` sin `mes_key` | `Dim_Tiempo.mes_key` → FK a `Dim_Mes` | Materializa la dimensión conformada: un filtro de mes alcanza ventas (diarias) y finanzas (mensuales) en Power BI y permite *Mes* como dimensión referenciada en SSAS | Aplicado |
+| D3 | El script de K-means escribe `segmento_cluster` en la BD después de cada carga | K-means exporta `mining/output/segmentos_cliente.csv` y el ETL lo integra en `Dim_Cliente` al cargar | Se elimina la dependencia de orden (la carga total ya no borra los segmentos) y la muestra también trae el segmento | Aplicado |
+| D4 | ETL en Pentaho Data Integration | ETL en Python (pandas + SQLAlchemy), mismas reglas de la sección 2.4 y mismas tablas de control | Reproducible en un clon limpio con un comando, y genera también el extracto de muestra. **Abierto:** si el equipo prefiere Pentaho, el `.ktr` debe producir las mismas tablas (`sql/ddl/01_tablas.sql`) y pasar la misma validación | Abierto |
+| D5 | Power BI con conexión en vivo al cubo | Guía para modo Importación desde SQL Server (o CSV) con medidas DAX | La parte 4 no depende de que el cubo esté desplegado (en esta máquina Deploy de Visual Studio falla con SQL Server 2025 Standard Developer). **Abierto:** si se mantiene la conexión en vivo, las medidas pasan al cubo (MDX) | Abierto |
+| D6 | Cubo SSAS | SSAS por construir + vista `vw_Cubo_Ventas` con `ROLLUP`/`CUBE` ya funcionando | Respaldo y evidencia de análisis multidimensional si SSAS se retrasa | Parcial |
+| D7 | Reglas de asociación y árbol de decisión: no seleccionados | No implementados | Se confirma con los datos: 850 órdenes con un producto cada una (no hay canastas) y no hay variable objetivo | Se mantiene |
+| D8 | — | `DROP`/`CREATE` de las tablas en cada carga en vez de `DELETE` + reinicio de contadores | Mismo efecto (carga total) y además aplica cambios de esquema | Aplicado |

@@ -1,0 +1,52 @@
+/* Miembros calculados de los KPIs (Fase 1, sección 3) para el script de cálculos del cubo SSAS.
+   ESQUELETO: los nombres de medidas y jerarquías suponen la estructura de olap/README.md.
+   Ajustarlos a como queden en el proyecto. Valores esperados 2024 en docs/kpis.md. */
+
+CALCULATE;
+
+-- Ventas ------------------------------------------------------------------------
+CREATE MEMBER CURRENTCUBE.[Measures].[Ticket Promedio] AS
+    IIF([Measures].[Hecho Ventas Count] = 0, NULL, [Measures].[Total] / [Measures].[Hecho Ventas Count]),
+    FORMAT_STRING = "Currency", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Ventas por Cliente] AS
+    IIF([Measures].[Clientes Distintos] = 0, NULL, [Measures].[Total] / [Measures].[Clientes Distintos]),
+    FORMAT_STRING = "Currency", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Participacion Ecommerce] AS
+    IIF([Measures].[Total] = 0, NULL,
+        ([Measures].[Total], [Canal].[Canal].[E-commerce]) / [Measures].[Total]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Crecimiento Ventas] AS
+    IIF([Tiempo].[Calendario].CurrentMember.Level.Name <> "Nombre Mes"
+        OR ([Measures].[Total], [Tiempo].[Calendario].CurrentMember.PrevMember) = 0, NULL,
+        ([Measures].[Total] - ([Measures].[Total], [Tiempo].[Calendario].CurrentMember.PrevMember))
+        / ([Measures].[Total], [Tiempo].[Calendario].CurrentMember.PrevMember)),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+-- Finanzas ----------------------------------------------------------------------
+CREATE MEMBER CURRENTCUBE.[Measures].[Margen Bruto] AS
+    IIF([Measures].[Ingresos] = 0, NULL, ([Measures].[Ingresos] - [Measures].[Costo Ventas]) / [Measures].[Ingresos]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Margen Neto] AS
+    IIF([Measures].[Ingresos] = 0, NULL, [Measures].[Utilidad Neta] / [Measures].[Ingresos]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Indice Gastos Operativos] AS
+    IIF([Measures].[Ingresos] = 0, NULL, [Measures].[Gastos Operativos] / [Measures].[Ingresos]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[ROI] AS
+    IIF([Measures].[Inversiones Realizadas] = 0, NULL, [Measures].[Utilidad Neta] / [Measures].[Inversiones Realizadas]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;
+
+CREATE MEMBER CURRENTCUBE.[Measures].[Flujo Caja Acumulado] AS
+    SUM(PERIODSTODATE([Mes].[Calendario].[Anio], [Mes].[Calendario].CurrentMember), [Measures].[Flujo Caja]),
+    FORMAT_STRING = "Currency", VISIBLE = 1;
+
+-- Tráfico web -------------------------------------------------------------------
+CREATE MEMBER CURRENTCUBE.[Measures].[Tasa Conversion Web] AS
+    IIF([Measures].[Visitas Web] = 0, NULL, [Measures].[Conversiones Web] / [Measures].[Visitas Web]),
+    FORMAT_STRING = "Percent", VISIBLE = 1;

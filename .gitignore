@@ -1,0 +1,26 @@
+# Credenciales
+.env
+
+# Entorno y temporales de Python / Jupyter
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Excel abierto (archivo de bloqueo) y copias
+~$*
+*.tmp
+
+# Power BI: se versiona el proyecto .pbip, no el binario ni la caché
+*.pbix
+**/.pbi/localSettings.json
+**/.pbi/cache.abf
+
+# SSAS / Visual Studio
+olap/ssas/**/bin/
+olap/ssas/**/obj/
+*.user
+.vs/
+
+# Respaldos de BD
+*.bak
