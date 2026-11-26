@@ -1,72 +1,76 @@
-# Datawarehouse Andina Retail Corp
+# DMD · Proyecto de Cátedra Fase 2: Datawarehouse Andina Retail Corp
 
-Proyecto de Cátedra, Fase 2 · Datawarehouse y Minería de Datos (DMD 941) · Universidad Don Bosco.
+Datawarehouse y Minería de Datos (DMD 941) · Universidad Don Bosco.
 
 **Entrega: 27 de noviembre de 2026, 11:59 p. m.** (Aula Digital): un PDF con 6 secciones + enlace al video de defensa. La defensa oral es obligatoria y su fecha aún no se ha anunciado.
 
-El Excel `datos_andina_retail_corp.xlsx` (año fiscal 2024) pasa por un ETL a un esquema estrella en SQL Server; sobre él se calculan los KPIs, el cubo OLAP, la segmentación K-means y el reporte de Power BI. El diseño viene de la propuesta de la Fase 1.
+## Qué hay aquí, en un minuto
 
-## El contrato de datos
+El Excel del caso (`datos_andina_retail_corp.xlsx`) **ya está limpio y cargado** en un Datawarehouse en SQL Server, con el esquema estrella de la Fase 1. Sobre esa base ya funcionan los 10 KPIs y una segmentación K-means. Todo está verificado: los totales y los KPIs coinciden con el Excel original.
 
-Todas las partes trabajan contra **las mismas tablas y columnas**, definidas en [`etl/contrato.py`](etl/contrato.py) y documentadas en [`docs/diccionario_datos.md`](docs/diccionario_datos.md):
+Lo más importante: **la misma base existe como archivos CSV** en `data/sample/`. Quien no tenga SQL Server puede trabajar igual con esos archivos, que tienen exactamente las mismas tablas y columnas.
 
-- `data/sample/*.csv`: el extracto limpio **completo** (850 órdenes, 120 clientes, 12 meses), con las mismas llaves que la BD.
-- SQL Server `AndinaRetailDW`: las mismas tablas.
+| Si te toca… | Empieza aquí | Qué ya está hecho | Qué te falta |
+|---|---|---|---|
+| **1. ETL y DW** | `etl/README.md` | ETL completo (Excel → limpieza → SQL Server), con validación automática y reporte de filas descartadas | Decidir si se queda en Python o se rehace en Pentaho, que fue lo que se propuso (`docs/decisiones.md`, D4) |
+| **2. KPIs y cubo** | `olap/README.md`, `sql/README.md` | Los 10 KPIs en vistas SQL (valores verificados), consultas de evidencia y un cubo en SQL con `ROLLUP`/`CUBE` | Construir el cubo SSAS siguiendo la guía paso a paso |
+| **3. Minería** | `mining/README.md` | Notebook de K-means que corre de punta a punta | Elegir el número de grupos (k) y ponerle nombre a cada grupo (celdas 🟨) |
+| **4. Power BI** | `powerbi/README.md` | Consultas listas para pegar, relaciones del modelo, medidas DAX de los 10 KPIs y boceto de las páginas | Armar el reporte en Power BI y escribir la interpretación |
+| **Informe PDF** | `docs/README.md` | Textos de apoyo por sección: diccionario, reglas de limpieza, KPIs, decisiones y relación con las clases | Redactar el informe y hacer las capturas |
 
-Las partes 3 y 4 pueden trabajar con los CSV sin instalar SQL Server, y cambiar después a la BD sin tocar su código (`FUENTE=bd` en minería, parámetro `FuenteDatos` en Power BI).
+## Cómo se usa
 
-## Levantar el entorno (Windows)
-
-Requisitos: Python 3.12, Git. Para cargar la BD: SQL Server 2019+ con autenticación de Windows y **ODBC Driver 18 for SQL Server**.
+Requisitos: Windows, Python 3.12 y Git. Para la BD: SQL Server con autenticación de Windows y **ODBC Driver 18 for SQL Server**.
 
 ```powershell
-git clone <url-del-repo> andina-retail-dw
-cd andina-retail-dw
+git clone <url-del-repo> dmd-proyecto-catedra-fase2
+cd dmd-proyecto-catedra-fase2
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 copy .env.example .env                       # ajustar si el servidor no es localhost
 
-.venv\Scripts\python -m etl.run_etl          # Excel -> limpieza -> data/sample + SQL Server + validación
+.venv\Scripts\python -m etl.run_etl          # carga todo en SQL Server y regenera data/sample
 .venv\Scripts\python -m etl.run_etl --sin-bd # sin SQL Server: solo regenera data/sample
 ```
 
-El ETL termina con `OK` y escribe [`data/sample/reporte_carga.md`](data/sample/reporte_carga.md): conciliación de filas y totales Excel ↔ muestra ↔ BD, los 9 KPIs anuales de SQL contra un cálculo directo sobre el Excel, y las filas rechazadas u observadas. Si algo no cuadra, sale con código 1.
+Al terminar dice `OK` y deja el resultado en [`data/sample/reporte_carga.md`](data/sample/reporte_carga.md).
 
-Ejecutar el notebook de K-means de punta a punta:
+Para correr el notebook de K-means de punta a punta:
 
 ```powershell
 .venv\Scripts\python -m jupyter nbconvert --to notebook --execute --inplace mining\01_kmeans_clientes.ipynb
 ```
 
-## Partes y responsables
+## Números de referencia (2024)
 
-| Parte | Carpetas | Responsable | Estado de la base |
-|---|---|---|---|
-| 1. ETL y Datawarehouse | `etl/`, `sql/ddl/`, `docs/` | *por asignar* | ✅ ETL Python funcionando y validado. Decidir si se queda o se rehace en Pentaho (`docs/decisiones.md`, D4) |
-| 2. KPIs y cubo OLAP | `sql/kpis/`, `sql/olap/`, `olap/` | *por asignar* | ✅ 10 KPIs en vistas SQL, verificados. ✅ Vista CUBE/ROLLUP. ⬜ Cubo SSAS (guía + MDX esqueleto) |
-| 3. Minería de datos | `mining/` | *por asignar* | ✅ Notebook K-means ejecutable; faltan las decisiones del equipo (🟨 en el notebook) |
-| 4. Power BI e interpretación | `powerbi/` | *por asignar* | ✅ Consultas M generadas, relaciones, medidas DAX, boceto. ⬜ Construir el `.pbip` |
+Sirven para comprobar que lo que armes cuadra con la base:
 
-Cada carpeta tiene un README corto con lo que falta.
+| Concepto | Valor |
+|---|---|
+| Ventas | 850 órdenes · $705,113.80 |
+| Ingresos (Finanzas) | $2,331,474.57 (no concilian con las ventas; está documentado) |
+| Margen bruto / neto | 41.57 % / 26.90 % |
+| Ticket promedio / ventas por cliente | $829.55 / $5,875.95 |
+| Participación del e-commerce / conversión web | 44.00 % / 9.01 % |
 
-## Cómo trabajar
+Los 10 KPIs con su fórmula están en [`docs/kpis.md`](docs/kpis.md).
+
+## Reglas del equipo
 
 - `main` siempre funciona: el ETL corre y da `OK`.
-- Una rama por tarea (`parte3-kmeans-k`, `parte4-pagina-finanzas`, …) y un **PR con al menos un revisor** del equipo. Con el plazo actual, PRs chicos y revisión el mismo día.
-- Si cambias el contrato (`etl/contrato.py`): corre `python -m etl.generar` (regenera DDL, diccionario y consultas de Power Query) y `python -m etl.run_etl`, y avisa a las partes 3 y 4 en el PR.
+- Una rama por tarea (`parte3-kmeans-k`, `parte4-pagina-finanzas`, …) y un **PR revisado por otra persona del equipo**. Con el plazo actual, PRs pequeños y revisados el mismo día.
+- La estructura de las tablas está en un solo archivo, [`etl/contrato.py`](etl/contrato.py). Si la cambias, corre `python -m etl.generar` y `python -m etl.run_etl`, y avísale al resto en el PR.
 - No subir `.env`, `.pbix` ni respaldos `.bak` (ya están en `.gitignore`).
 
-## Mapa del repositorio
+## Mapa de carpetas
 
 ```
-data/raw/          Excel original (datos simulados con fines académicos; 75 KB)
-data/sample/       Extracto limpio = contrato (CSV) + reporte_carga.md       ← generado por el ETL
-etl/               contrato.py · extract · transform · load · validate · run_etl · generar
-sql/ddl/           Tablas (generado desde el contrato)
-sql/kpis/          Vistas de KPIs (las crea el ETL) y consultas de evidencia
-sql/olap/          Vista CUBE/ROLLUP (la crea el ETL)
-olap/              Guía y MDX del cubo SSAS
-mining/            Notebook K-means + datos.py + output/ (segmentos que el ETL integra)
-powerbi/           Guía, consultas M, medidas DAX y proyecto .pbip
-docs/              Diccionario, esquema estrella, reglas de limpieza, KPIs, decisiones
+data/raw/      Excel original del caso
+data/sample/   La base limpia en CSV + reportes de la carga        (lo genera el ETL)
+etl/           Programa que limpia el Excel y carga la base
+sql/           Tablas, vistas de KPIs, cubo en SQL y consultas de evidencia
+olap/          Guía y cálculos para el cubo SSAS
+mining/        Notebook de K-means y sus resultados
+powerbi/       Guía, consultas, medidas DAX y el proyecto de Power BI
+docs/          Material para el informe
 ```
