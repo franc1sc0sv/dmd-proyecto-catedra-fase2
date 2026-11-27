@@ -4,7 +4,9 @@
 
 **Para quién:** la parte 1 (ETL). Las demás partes no necesitan Pentaho: trabajan con la base ya cargada o con los CSV de `data/sample/`.
 
-**Estado (26 nov 2026):** terminado y verificado. Ver [Cómo se verificó](#cómo-se-verificó).
+**Estado (26 nov 2026):** terminado y verificado, también desde un clon limpio en `C:\`. Ver [Cómo se verificó](#cómo-se-verificó).
+
+> **¿Eres de las partes 2, 3 o 4?** No necesitas instalar Pentaho. Para tener la base `AndinaRetailDW` en tu SQL Server corre `.venv\Scripts\python -m etl.run_etl` (README principal): carga **exactamente las mismas tablas y llaves** que este ETL. Si no tienes SQL Server, usa los CSV de `data/sample/`. Solo quien grabe la parte del ETL en el video necesita Pentaho.
 
 ![Job del ETL ejecutado en Spoon](../docs/img/etl/etl-02-job-ejecutado.png)
 
@@ -120,3 +122,5 @@ Capturas del 26 de noviembre de 2026 en `docs/img/etl/`:
 | Kitchen termina con código 9 | La carpeta actual termina en `\` (por ejemplo `C:\`) | Usar `ejecutar_etl.bat`, que ya lo evita |
 | La validación aborta | Hay rechazos o el Excel cambió | Revisar `SELECT * FROM dbo.Etl_Rechazos` y el bloque `xl_`/`dw_` del registro |
 | Al abrir Spoon sale "Unable to open file" | Spoon intenta reabrir un archivo que ya no existe | Cerrar el aviso; no afecta |
+| La consola se llena de `INFO: ConnectionID:… TDS_COLMETADATA` | Mensajes informativos del driver de SQL Server | Son normales. Lo que importa es la última línea: `Kitchen termino con codigo 0` |
+| La carga funcionaba y ahora falla la llave de `Hecho_Ventas` | Desde D10 la llave primaria es solo `orden_id` | Ejecutar el job completo, que recrea las tablas con el DDL nuevo |

@@ -10,6 +10,8 @@ El Excel del caso (`datos_andina_retail_corp.xlsx`) **ya está limpio y cargado*
 
 La misma base está también **en archivos CSV** (`data/sample/`), con exactamente las mismas tablas y columnas. Quien no tenga SQL Server puede trabajar igual con esos archivos.
 
+> **Qué se entrega, la rúbrica y qué falta:** [`docs/entrega.md`](docs/entrega.md).
+
 ## ¿Qué me toca? Empieza por tu fila
 
 Cada carpeta tiene un README con el mismo orden: **qué es, qué ya está hecho, tus pasos, qué archivos tocar y cómo saber que terminaste.**
