@@ -95,6 +95,7 @@ Capturas del 26 de noviembre de 2026 en `docs/img/etl/`:
 
 | Archivo | Qué muestra | Uso sugerido |
 |---|---|---|
+| `etl-00-perfilado.png` | Perfilado del Excel antes de limpiar (tipos, nulos, distintos, mín. y máx.) | Sección 2.1 |
 | `etl-01-job-diseno.png` | El job en Spoon: limpieza, 7 dimensiones, 3 hechos, validación | Sección 2.2 |
 | `etl-02-job-ejecutado.png` | El job ejecutado: todas las entradas con *Success* (*Job metrics*) | Sección 2.2 |
 | `etl-03-t05-diseno.png` | `t05_hecho_ventas`: lookups, Calculator, rama de observaciones y rechazos | Sección 2.2 / 2.3 |
