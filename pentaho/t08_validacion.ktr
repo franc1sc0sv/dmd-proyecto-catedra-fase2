@@ -1285,9 +1285,39 @@
       <remove>N</remove>
     </calculation>
     <calculation>
+      <field_name>xl_ventas_total_2</field_name>
+      <calc_type>ROUND_2</calc_type>
+      <field_a>xl_ventas_total</field_a>
+      <field_b>dos</field_b>
+      <field_c/>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+      <remove>N</remove>
+    </calculation>
+    <calculation>
+      <field_name>xl_ingresos_2</field_name>
+      <calc_type>ROUND_2</calc_type>
+      <field_a>xl_ingresos</field_a>
+      <field_b>dos</field_b>
+      <field_c/>
+      <value_type>Number</value_type>
+      <value_length>-1</value_length>
+      <value_precision>-1</value_precision>
+      <conversion_mask/>
+      <decimal_symbol/>
+      <grouping_symbol/>
+      <currency_symbol/>
+      <remove>N</remove>
+    </calculation>
+    <calculation>
       <field_name>dif_ventas_t</field_name>
       <calc_type>SUBTRACT</calc_type>
-      <field_a>xl_ventas_total</field_a>
+      <field_a>xl_ventas_total_2</field_a>
       <field_b>dw_ventas_total</field_b>
       <field_c/>
       <value_type>Number</value_type>
@@ -1317,7 +1347,7 @@
     <calculation>
       <field_name>dif_ingresos_t</field_name>
       <calc_type>SUBTRACT</calc_type>
-      <field_a>xl_ingresos</field_a>
+      <field_a>xl_ingresos_2</field_a>
       <field_b>dw_ingresos</field_b>
       <field_c/>
       <value_type>Number</value_type>
@@ -1383,7 +1413,7 @@
         <name>rech_ventas</name>
       </field>
       <field>
-        <name>xl_ventas_total</name>
+        <name>xl_ventas_total_2</name>
       </field>
       <field>
         <name>dw_ventas_total</name>
@@ -1395,7 +1425,7 @@
         <name>dw_finanzas_filas</name>
       </field>
       <field>
-        <name>xl_ingresos</name>
+        <name>xl_ingresos_2</name>
       </field>
       <field>
         <name>dw_ingresos</name>

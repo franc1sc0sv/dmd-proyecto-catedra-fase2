@@ -123,7 +123,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>180</xloc>
+      <xloc>220</xloc>
       <yloc>120</yloc>
       <attributes_kjc/>
     </entry>
@@ -136,8 +136,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>580</xloc>
-      <yloc>410</yloc>
+      <xloc>770</xloc>
+      <yloc>440</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -174,7 +174,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>340</xloc>
+      <xloc>440</xloc>
       <yloc>120</yloc>
       <attributes_kjc/>
     </entry>
@@ -212,7 +212,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>500</xloc>
+      <xloc>660</xloc>
       <yloc>120</yloc>
       <attributes_kjc/>
     </entry>
@@ -250,12 +250,12 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>660</xloc>
+      <xloc>880</xloc>
       <yloc>120</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
-      <name>Dim_Producto, Canal, Vendedor y Region</name>
+      <name>Producto, Canal, Vendedor, Region</name>
       <description/>
       <type>TRANS</type>
       <attributes/>
@@ -288,7 +288,7 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>820</xloc>
+      <xloc>1100</xloc>
       <yloc>120</yloc>
       <attributes_kjc/>
     </entry>
@@ -326,8 +326,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>820</xloc>
-      <yloc>260</yloc>
+      <xloc>1100</xloc>
+      <yloc>280</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -364,8 +364,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>660</xloc>
-      <yloc>260</yloc>
+      <xloc>880</xloc>
+      <yloc>280</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -402,8 +402,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>500</xloc>
-      <yloc>260</yloc>
+      <xloc>660</xloc>
+      <yloc>280</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -440,8 +440,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>340</xloc>
-      <yloc>260</yloc>
+      <xloc>440</xloc>
+      <yloc>280</yloc>
       <attributes_kjc/>
     </entry>
     <entry>
@@ -452,8 +452,8 @@
       <parallel>N</parallel>
       <draw>Y</draw>
       <nr>0</nr>
-      <xloc>180</xloc>
-      <yloc>260</yloc>
+      <xloc>220</xloc>
+      <yloc>280</yloc>
       <attributes_kjc/>
     </entry>
   </entries>
@@ -523,7 +523,7 @@
     </hop>
     <hop>
       <from>Dim_Cliente</from>
-      <to>Dim_Producto, Canal, Vendedor y Region</to>
+      <to>Producto, Canal, Vendedor, Region</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
       <enabled>Y</enabled>
@@ -531,7 +531,7 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Dim_Producto, Canal, Vendedor y Region</from>
+      <from>Producto, Canal, Vendedor, Region</from>
       <to>Detener con error</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -540,7 +540,7 @@
       <unconditional>N</unconditional>
     </hop>
     <hop>
-      <from>Dim_Producto, Canal, Vendedor y Region</from>
+      <from>Producto, Canal, Vendedor, Region</from>
       <to>Hecho_Ventas</to>
       <from_nr>0</from_nr>
       <to_nr>0</to_nr>
@@ -632,10 +632,11 @@
   </hops>
   <notepads>
     <notepad>
-      <note>Job del ETL de Andina Retail Corp (Fase 1, Figura 8 y Tabla 9). Carga total: recrea las tablas, carga las 7 dimensiones y los 3 hechos, y valida contra el Excel. Cada entrada sigue solo si la anterior terminó bien; si una falla, el job se detiene y el error queda en el registro.</note>
+      <note>Job del ETL de Andina Retail Corp (Fase 1, Figura 8 y Tabla 9). Carga total: recrea las tablas, carga las 7 dimensiones y los 3 hechos, y valida contra el Excel.
+Cada entrada sigue solo si la anterior terminó bien; si una falla, el job se detiene y el error queda en el registro.</note>
       <xloc>40</xloc>
       <yloc>10</yloc>
-      <width>860</width>
+      <width>1180</width>
       <heigth>60</heigth>
       <fontname>Segoe UI</fontname>
       <fontsize>9</fontsize>
